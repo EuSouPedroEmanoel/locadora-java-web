@@ -13,10 +13,11 @@
     </head>
     <body>
         <div>
-        <h1>YouCadora</h1>
+         <a href="/Locadora"><h1>YouCadora</h1></a>
+         <hr/>
             <div>
-                <a href="#">Entrar</a>
-                <a href="#">Cadastrar</a>
+                <a href="./login.jsp">Entrar</a>
+                <a href="./logon.jsp">Cadastrar</a>
             </div>
         </div>
         
