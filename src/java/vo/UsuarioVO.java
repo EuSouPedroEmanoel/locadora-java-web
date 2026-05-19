@@ -6,17 +6,14 @@ import java.sql.Timestamp;
 public class UsuarioVO {
     private int id;
     private String nome;
-    private Date dataNascimento; // Mapeia o 'date' do banco
+    private Date dataNascimento; 
     private double cash;
     private String sexo;
     private String senha;
-    private int nivelAcesso; // Mapeia o 'tinyint'
+    private int nivelAcesso;
     private String email;
-    private Timestamp dataCriacao; // Mapeia o 'datetime'
+    private Timestamp dataCriacao;
 
-    // Atalho na sua IDE (Alt+Insert ou botão direito -> Generate)
-    // para criar os Getters e Setters de todas essas variáveis!
-    
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     

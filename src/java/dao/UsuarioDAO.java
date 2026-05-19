@@ -7,39 +7,33 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UsuarioDAO {
+    private final Conexao conexao;
 
-    public void cadastrar(UsuarioVO usuario) {
-        // O SQL de Inserção. Os pontos de interrogação são espaços em branco
-        // que vamos preencher com os dados do usuário. (Não inserimos o ID porque é automático).
-        String sql = "INSERT INTO usuarios (nome, data_nascimento, cash, sexo, senha, nivel_acesso, email, data_criacao) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public UsuarioDAO() {
+        conexao = new Conexao();
+    }
+
+    public boolean inserir(Usuario u) {
+        String sql = "INSERT INTO usuario (nome, data_nascimento, cash, sexo, senha, nivel_acesso, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
         
-        Conexao db = new Conexao();
-        Connection conn = db.estabeleceConexao();
-        
-        if (conn != null) {
-            try {
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                
-                // Preenchendo os pontos de interrogação com os dados do VO
-                stmt.setString(1, usuario.getNome());
-                stmt.setDate(2, usuario.getDataNascimento());
-                stmt.setDouble(3, usuario.getCash());
-                stmt.setString(4, usuario.getSexo());
-                stmt.setString(5, usuario.getSenha());
-                stmt.setInt(6, usuario.getNivelAcesso());
-                stmt.setString(7, usuario.getEmail());
-                stmt.setTimestamp(8, usuario.getDataCriacao());
-                
-                // Executa o comando no banco
-                stmt.execute();
-                System.out.println("Usuário cadastrado com sucesso!");
-                
-            } catch (SQLException e) {
-                System.err.println("Erro ao cadastrar usuário: " + e.getMessage());
-            } finally {
-                db.desconectar();
-            }
+        try (Connection conn = conexao.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, u.getNome());
+            ps.setString(2, u.getDataNascimento());
+            ps.setString(3, u.getCash());
+            ps.setString(4, u.getSexo());
+            ps.setString(5, u.getSenha());
+            ps.setString(6, u.getNivelAcesso());
+            ps.setString(7, u.getEmail());
+            
+            return ps.executeUpdate() > 0;
+            
+        } catch (SQLException erro) {
+            System.err.println("Exceção causada na inserção: " + erro.getMessage());
+            return false;
+        } finally {
+            conexao.desconectar();
         }
     }
 }
