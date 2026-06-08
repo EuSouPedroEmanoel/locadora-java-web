@@ -1,0 +1,65 @@
+package DAO;
+
+import Conexao.Conexao;
+import VO.Pessoa;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+public class PessoasDAO {
+    private final Conexao conexao;
+
+    public PessoasDAO() {
+        conexao = new Conexao();
+    }
+
+    public String inserir(Pessoa p) {
+        try {
+            PreparedStatement ps;
+            String sql = "insert into pessoa (cpf,nome, data_nascimento, sexo, tub_money, email, senha) values (?,?,?,?,?,?,?)";
+            ps = conexao.conectar().prepareStatement(sql);
+            ps.setString(1, p.getCpf());
+            ps.setString(2, p.getNome());
+            ps.setString(3, p.getDataNascimento());
+            ps.setString(4, p.getSexo());
+            ps.setString(5, p.getTubMoney());
+            ps.setString(6, p.getEmail());
+            ps.setString(7, p.getSenha());
+            ps.executeUpdate();
+            return "True";
+        } catch (SQLException erro) {
+            return "False";
+        } finally {
+            conexao.desconectar();
+        }
+    }
+
+    public ArrayList<Pessoa> listar() {
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            String sql = "select cpf,nome,data_nascimento,sexo,tub_money,email,senha from pessoa";
+            ps = conexao.conectar().prepareStatement(sql);
+            rs = ps.executeQuery();
+            ArrayList<Pessoa> lista = new ArrayList<>();            
+            while (rs.next()) {
+                Pessoa p = new Pessoa();
+                p.setNome(rs.getString("nome"));
+                p.setCpf(rs.getString("cpf"));
+                p.setDataNascimento(rs.getString("data_nascimento"));
+                p.setSexo(rs.getString("sexo"));
+                p.setTubMoney(rs.getString("tub_money"));
+                p.setEmail(rs.getString("email"));
+                p.setSenha(rs.getString("senha"));
+                lista.add(p);
+            }
+            return lista;
+        } catch (SQLException erro) {
+            erro.printStackTrace();
+            return null;
+        } finally {
+            conexao.desconectar();
+        }
+    }
+}
