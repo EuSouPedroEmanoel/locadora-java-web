@@ -16,7 +16,10 @@ public class PessoasController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        int operacao = Integer.parseInt(request.getParameter("op"));
+        String opParam = request.getParameter("op");
+        if (opParam == null) return;
+        
+        int operacao = Integer.parseInt(opParam.replaceAll("[^0-9]", ""));
         PessoasDAO p = new PessoasDAO();
 
         switch (operacao) {
@@ -39,27 +42,20 @@ public class PessoasController extends HttpServlet {
                 rd.forward(request, response);
             }
             case 3 -> {
-                // login
-
                 String email = request.getParameter("email");
                 String senha = request.getParameter("password");
-
-                System.out.println("Email recebido: [" + email + "]");
-                System.out.println("Senha recebida: [" + senha + "]");
 
                 Pessoa usuarioLogado = p.buscarPorLogin(email, senha);
 
                 if (usuarioLogado != null) {
                     request.getSession().setAttribute("usuarioLogado", usuarioLogado);
-                    response.sendRedirect("catalogo.jsp");
-                }
-                else {
+                    response.sendRedirect("FilmesController?op=1");
+                } else {
                     request.setAttribute("erroLogin", "E-mail ou senha inválidos!");
                     RequestDispatcher rd = request.getRequestDispatcher("/entrar.jsp");
                     rd.forward(request, response);
-                  }
+                }
             }
-
         }
     }
 
