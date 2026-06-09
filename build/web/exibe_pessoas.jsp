@@ -39,7 +39,8 @@
                             <td>Sexo</td>
                             <td>TubMoney</td>
                             <td>Email</td>
-                            <td>Senha
+                            <td>Senha</td>
+                            <td>Super User</td>
                         </tr>
 
                         <% for (int cont=0; cont < pessoas.size(); cont++) { Pessoa p=(Pessoa) pessoas.get(cont);
@@ -51,6 +52,7 @@
                             out.print("<td>" + p.getTubMoney() + "</td>");
                             out.print("<td>" + p.getEmail() + "</td>");
                             out.print("<td>" + p.getSenha() + "</td>");
+                            out.print("<td>" + p.getSuper_user() + "</td>");
                             out.print("</tr>");
                             }
                             out.print("</table>");

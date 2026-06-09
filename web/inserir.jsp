@@ -48,7 +48,13 @@
             <label for="password" style="color: white;">Senha</label>
             <input type="password" name="senha" style="background-color: #2E2E2E; color: white;" />
             <br />
+
+            <label for="super_user" style="color: white;">Definir como super usuário?</label>
+            <input type="checkbox" name="super_user" value="true" style="height: 30px; width: 30px;" />
+
             <input type="submit" value="Cadastrar" style="background-color: #2E2E2E; color: white;" />
+
+
         </form>
 
         <a href="index.html" style="color: white;">Voltar para Home</a>

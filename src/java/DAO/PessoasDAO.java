@@ -17,7 +17,7 @@ public class PessoasDAO {
     public String inserir(Pessoa p) {
         try {
             PreparedStatement ps;
-            String sql = "insert into pessoa (cpf,nome, data_nascimento, sexo, tub_money, email, senha) values (?,?,?,?,?,?,?)";
+            String sql = "insert into pessoa (cpf,nome, data_nascimento, sexo, tub_money, email, senha, super_user) values (?,?,?,?,?,?,?,?)";
             ps = conexao.conectar().prepareStatement(sql);
             ps.setString(1, p.getCpf());
             ps.setString(2, p.getNome());
@@ -26,6 +26,7 @@ public class PessoasDAO {
             ps.setString(5, p.getTubMoney());
             ps.setString(6, p.getEmail());
             ps.setString(7, p.getSenha());
+            ps.setBoolean(8, p.getSuper_user());
             ps.executeUpdate();
             return "True";
         } catch (SQLException erro) {
@@ -39,7 +40,7 @@ public class PessoasDAO {
         PreparedStatement ps;
         ResultSet rs;
         try {
-            String sql = "select cpf,nome,data_nascimento,sexo,tub_money,email,senha from pessoa";
+            String sql = "select cpf,nome,data_nascimento,sexo,tub_money,email,senha, super_user from pessoa";
             ps = conexao.conectar().prepareStatement(sql);
             rs = ps.executeQuery();
             ArrayList<Pessoa> lista = new ArrayList<>();            
@@ -52,6 +53,7 @@ public class PessoasDAO {
                 p.setTubMoney(rs.getString("tub_money"));
                 p.setEmail(rs.getString("email"));
                 p.setSenha(rs.getString("senha"));
+                p.setSuper_user(rs.getBoolean("super_user"));
                 lista.add(p);
             }
             return lista;
@@ -61,5 +63,37 @@ public class PessoasDAO {
         } finally {
             conexao.desconectar();
         }
+    }
+
+    public Pessoa buscarPorLogin(String email, String senha) {
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            String sql = "select cpf,nome,data_nascimento,sexo,tub_money,email,senha,super_user from pessoa where email = ? and senha = ?";
+            ps = conexao.conectar().prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, senha);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                Pessoa p = new Pessoa();
+                p.setNome(rs.getString("nome"));
+                p.setCpf(rs.getString("cpf"));
+                p.setDataNascimento(rs.getString("data_nascimento"));
+                p.setSexo(rs.getString("sexo"));
+                p.setTubMoney(rs.getString("tub_money"));
+                p.setEmail(rs.getString("email"));
+                p.setSenha(rs.getString("senha"));
+                p.setSuper_user(rs.getBoolean("super_user"));
+                
+                return p; 
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); 
+        } finally {
+            conexao.desconectar();
+        }
+        
+        return null; 
     }
 }

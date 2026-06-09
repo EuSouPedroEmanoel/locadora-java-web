@@ -12,6 +12,15 @@ public class Pessoa {
     private String sexo;
     private String senha;
     private String email;
+    private boolean super_user;
+
+    public boolean setSuper_user(boolean super_user) {
+        return this.super_user = super_user;
+    }
+
+    public boolean getSuper_user() {
+        return this.super_user;
+    }
 
     public String getCpf() {
         return cpf;
