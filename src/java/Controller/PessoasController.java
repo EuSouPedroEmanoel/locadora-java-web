@@ -54,7 +54,11 @@ public class PessoasController extends HttpServlet {
                     request.setAttribute("erroLogin", "E-mail ou senha inválidos!");
                     RequestDispatcher rd = request.getRequestDispatcher("/entrar.jsp");
                     rd.forward(request, response);
-                }
+                } 
+            }
+            case 4 -> {
+                request.getSession().invalidate();
+                response.sendRedirect("entrar.jsp");
             }
         }
     }

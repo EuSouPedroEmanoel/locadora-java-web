@@ -40,33 +40,33 @@
 
             <% if (session.getAttribute("usuarioLogado") != null) {
                 Pessoa user = (Pessoa) session.getAttribute("usuarioLogado");
-            if (user.getSuper_user()) { %>
-            <a href="http://localhost:8080/Locadora/GeneroController?op=1" style="color: yellow;">+ Adicionar Filme</a>
+                if (user.getSuper_user()) { %>
+                    <a href="http://localhost:8080/Locadora/GeneroController?op=1" style="color: yellow;">+ Adicionar Filme</a>
             <% } %>
-            <div>
-                Olá, ${sessionScope.usuarioLogado.nome} 🤠👋
-                <a href="LogoutServlet" style="color: white; margin-left: 10px;">Sair</a>
-            </div>
+                <div>
+                    Olá, ${sessionScope.usuarioLogado.nome} 🤠👋
+                    <a href="PessoasController?op=4" style="color: white; margin-left: 10px;">Sair</a>
+                </div>
             <% } else { %>
-            <div>
-                <a href="entrar.jsp" style="color: white;">Entrar</a>
-            </div>
+                <div>
+                    <a href="entrar.jsp" style="color: white;">Entrar</a>
+                </div>
             <% } %>
         </nav>
 
         <main>
             <div class="grid-container">
-                <%
+                <% 
                     List<Filme> filmes = (List<Filme>) request.getAttribute("listaFilmes");
                     if (filmes != null) {
-                        for (Filme f : filmes) {
-                        %>
-                        <div class="card">
-                            <img src="<%= f.getCapaLink() %>" alt="<%= f.getNome() %>">
-                            <h3><%= f.getNome() %></h3>
-                            <a href="DetalhesFilme?id=<%= f.getId() %>" style="color: cyan;">Ver Detalhes</a>
-                        </div>
-                        <%
+                        for (Filme f : filmes) { 
+                %>
+                    <div class="card">
+                        <img src="<%= f.getCapaLink() %>" alt="<%= f.getNome() %>">
+                        <h3><%= f.getNome() %></h3>
+                        <a href="FilmesController?op=3&id=<%= f.getId() %>" style="color: cyan;">Ver Detalhes</a>
+                    </div>
+                <% 
                         }
                     } else {
                         out.print("<p>Nenhum filme encontrado.</p>");

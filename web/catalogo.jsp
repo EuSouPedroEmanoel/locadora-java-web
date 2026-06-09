@@ -45,7 +45,7 @@
             <% } %>
                 <div>
                     Olá, ${sessionScope.usuarioLogado.nome} 🤠👋
-                    <a href="LogoutServlet" style="color: white; margin-left: 10px;">Sair</a>
+                    <a href="PessoasController?op=4" style="color: white; margin-left: 10px;">Sair</a>
                 </div>
             <% } else { %>
                 <div>
@@ -64,7 +64,7 @@
                     <div class="card">
                         <img src="<%= f.getCapaLink() %>" alt="<%= f.getNome() %>">
                         <h3><%= f.getNome() %></h3>
-                        <a href="DetalhesFilme?id=<%= f.getId() %>" style="color: cyan;">Ver Detalhes</a>
+                        <a href="FilmesController?op=3&id=<%= f.getId() %>" style="color: cyan;">Ver Detalhes</a>
                     </div>
                 <% 
                         }

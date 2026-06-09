@@ -36,6 +36,17 @@ public class PessoasDAO {
         }
     }
 
+    public void atualizarSaldo(String cpf, double novoSaldo) {
+    try {
+        String sql = "UPDATE pessoas SET tub_money = ? WHERE cpf = ?";
+        PreparedStatement ps = conexao.conectar().prepareStatement(sql);
+        ps.setDouble(1, novoSaldo);
+        ps.setString(2, cpf);
+        ps.executeUpdate();
+    } catch (SQLException e) { e.printStackTrace(); }
+    finally { conexao.desconectar(); }
+}
+
     public ArrayList<Pessoa> listar() {
         PreparedStatement ps;
         ResultSet rs;
