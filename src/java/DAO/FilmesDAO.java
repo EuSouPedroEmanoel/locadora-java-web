@@ -19,7 +19,6 @@ public class FilmesDAO {
         ResultSet rs;
 
         try {
-            // Selecionando todas as colunas
             String sql = "SELECT * FROM filmes";
             ps = conexao.conectar().prepareStatement(sql);
             rs = ps.executeQuery();
@@ -57,7 +56,6 @@ public class FilmesDAO {
         return null;
     }
 
-    // Método auxiliar para evitar repetição de código
     private Filme carregarFilme(ResultSet rs) throws SQLException {
         Filme f = new Filme();
         f.setId(rs.getInt("id"));
