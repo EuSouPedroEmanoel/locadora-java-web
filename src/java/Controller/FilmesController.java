@@ -2,9 +2,12 @@ package Controller;
 
 import DAO.FilmesDAO;
 import DAO.PessoasDAO;
+import DAO.PessoaFilmesDAO;
 import VO.Filme;
 import VO.Pessoa;
+import VO.PessoaFilme;
 import java.io.IOException;
+import java.time.LocalDate;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,8 +24,10 @@ public class FilmesController extends HttpServlet {
         String opParam = request.getParameter("op");
         if (opParam == null) return;
         int operacao = Integer.parseInt(opParam.replaceAll("[^0-9]", ""));
+        
         FilmesDAO f = new FilmesDAO();
         PessoasDAO p = new PessoasDAO();
+        PessoaFilmesDAO pfDAO = new PessoaFilmesDAO();
 
         switch (operacao) {
             case 1 -> {
@@ -59,13 +64,26 @@ public class FilmesController extends HttpServlet {
                     double novoSaldo = Double.parseDouble(user.getTubMoney()) - filme.getTubCusto();
                     p.atualizarSaldo(user.getCpf(), novoSaldo);
                     f.atualizarDisponibilidade(idFilme, false);
+                    
+                    PessoaFilme pf = new PessoaFilme();
+                    pf.setCpf(user.getCpf());
+                    pf.setFilmeId(idFilme);
+                    // AQUI A MUDANÇA: passamos o objeto LocalDate diretamente
+                    pf.setDataEmprestimo(LocalDate.now().toString()); 
+                    pf.setDataDevolucaoPrev(LocalDate.now().plusDays(7));
+                    pfDAO.inserir(pf);
+                    
                     user.setTubMoney(String.valueOf(novoSaldo));
                 }
                 response.sendRedirect("FilmesController?op=3&id=" + idFilme);
             }
             case 5 -> {
                 int idFilme = Integer.parseInt(request.getParameter("id"));
+                Pessoa user = (Pessoa) request.getSession().getAttribute("usuarioLogado");
+                
                 f.atualizarDisponibilidade(idFilme, true);
+                pfDAO.finalizarEmprestimo(idFilme, user.getCpf());
+                
                 response.sendRedirect("FilmesController?op=3&id=" + idFilme);
             }
         }

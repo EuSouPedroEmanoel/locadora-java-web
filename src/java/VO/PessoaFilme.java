@@ -1,13 +1,15 @@
 package VO;
 
+import java.time.LocalDate;
+
 public class PessoaFilme {
 
     private int id;
     private String cpf;
     private int filmeId;
     private String dataEmprestimo;
-    private Data dataDevolucaoPrev;
-    private Data dataDevolucaoReal;
+    private LocalDate dataDevolucaoPrev;
+    private LocalDate dataDevolucaoReal;
 
     public int getId() {
         return id;
@@ -41,20 +43,19 @@ public class PessoaFilme {
         this.dataEmprestimo = dataEmprestimo;
     }
 
-    public Data getDataDevolucaoPrev() {
+    public LocalDate getDataDevolucaoPrev() {
         return dataDevolucaoPrev;
     }
 
-    public void setDataDevolucaoPrev(Data dataDevolucaoPrev) {
+    public void setDataDevolucaoPrev(LocalDate dataDevolucaoPrev) {
         this.dataDevolucaoPrev = dataDevolucaoPrev;
     }
 
-    public Data getDataDevolucaoReal() {
+    public LocalDate getDataDevolucaoReal() {
         return dataDevolucaoReal;
     }
 
-    public void setDataDevolucaoReal(Data dataDevolucaoReal) {
+    public void setDataDevolucaoReal(LocalDate dataDevolucaoReal) {
         this.dataDevolucaoReal = dataDevolucaoReal;
     }
-    
 }

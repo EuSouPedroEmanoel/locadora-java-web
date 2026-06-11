@@ -38,7 +38,7 @@ public class PessoasDAO {
 
     public void atualizarSaldo(String cpf, double novoSaldo) {
     try {
-        String sql = "UPDATE pessoas SET tub_money = ? WHERE cpf = ?";
+        String sql = "UPDATE pessoa SET tub_money = ? WHERE cpf = ?";
         PreparedStatement ps = conexao.conectar().prepareStatement(sql);
         ps.setDouble(1, novoSaldo);
         ps.setString(2, cpf);

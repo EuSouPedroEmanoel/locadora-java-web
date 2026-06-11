@@ -1,6 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="VO.Filme"%>
 <%@page import="VO.Pessoa"%>
+<%@page import="DAO.PessoaFilmesDAO"%>
+
 <html>
     <head>
         <title>Detalhes do Filme</title>
@@ -9,6 +11,10 @@
         <%
             Filme f = (Filme) request.getAttribute("filmeDetalhe");
             Pessoa user = (Pessoa) session.getAttribute("usuarioLogado");
+            PessoaFilmesDAO pfDAO = new PessoaFilmesDAO();
+            
+            String cpfDono = (f != null && !f.getDisponibilidade()) ? pfDAO.buscarCpfDonoDoFilme(f.getId()) : null;
+            boolean usuarioEhDono = (user != null && cpfDono != null && user.getCpf().equals(cpfDono));
         %>
 
         <div style="max-width: 800px; margin: 0 auto; display: flex; gap: 30px;">
@@ -31,6 +37,9 @@
                 <p style="color: red;">Saldo insuficiente para alugar.</p>
                 <% } %>
                 <% } else { %>
+                <p style="color: orange; font-weight: bold; font-size: 1.2em;">ALUGADO</p>
+
+                <% if (usuarioEhDono) { %>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <a href="FilmesController?op=5&id=<%= f.getId() %>"
                         style="background-color: red; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
@@ -41,6 +50,7 @@
                         Assista aqui
                     </a>
                 </div>
+                <% } %>
                 <% } %>
 
                 <% } else { %>
