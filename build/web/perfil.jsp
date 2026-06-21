@@ -38,9 +38,7 @@
                                 <p style="font-size: 0.9em; margin: 5px 0; color: #ccc;">Alugado em: <%= item.getDataEmprestimo() %></p>
 
                                 <%
-                                    // LÓGICA DE STATUS: Devolvido (No Prazo/Atrasado), Pendente ou Atrasado
                                     if (item.getDataDevolucaoReal() != null) {
-                                        // Verifica se entregou depois do prazo
                                         boolean entregueAtrasado = item.getDataDevolucaoPrev() != null && item.getDataDevolucaoReal().isAfter(item.getDataDevolucaoPrev());
                                         
                                         if (entregueAtrasado) {
@@ -54,7 +52,6 @@
                                         <%
                                         }
                                     } else {
-                                        // Pega a data de hoje para comparar com a data prevista
                                         java.time.LocalDate hoje = java.time.LocalDate.now();
                                         boolean estaAtrasado = item.getDataDevolucaoPrev() != null && item.getDataDevolucaoPrev().isBefore(hoje);
                                         
@@ -62,14 +59,15 @@
                                         %>
                                         <p style="color: #ff4c4c; font-weight: bold; margin: 5px 0;">🚨 Atrasado</p>
                                         <p style="font-size: 0.9em; margin: 5px 0; color: #ffcccc;">Prazo Final era: <%= item.getDataDevolucaoPrev() %></p>
-                                        <a href="FilmesController?op=5&id=<%= item.getFilmeId() %>" style="display: inline-block; margin-top: 15px; padding: 10px; background-color: #cc0000; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Devolver Agora</a>
+                                        <a href="FilmesController?op=5&id=<%= item.getFilmeId() %>" style="display: block; margin-top: 10px; padding: 8px; background-color: #cc0000; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Devolver Agora</a>
                                         <%      } else { %>
                                         <p style="color: #ffcc00; font-weight: bold; margin: 5px 0;">⏳ Pendente</p>
                                         <p style="font-size: 0.9em; margin: 5px 0; color: #ccc;">Prazo Final: <%= item.getDataDevolucaoPrev() %></p>
-                                        <a href="FilmesController?op=5&id=<%= item.getFilmeId() %>" style="display: inline-block; margin-top: 15px; padding: 10px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Devolver Agora</a>
+                                        <a href="FilmesController?op=5&id=<%= item.getFilmeId() %>" style="display: block; margin-top: 10px; padding: 8px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Devolver Agora</a>
                                         <%      }
                                         }
                                     %>
+                                    <a href="FilmesController?op=3&id=<%= item.getFilmeId() %>" style="color: white;">Ver Detalhes</a>
                                 </div>
                             </div>
                             <%

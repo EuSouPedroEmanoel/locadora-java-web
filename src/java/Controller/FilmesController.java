@@ -1,6 +1,7 @@
 package Controller;
 
 import DAO.FilmesDAO;
+import DAO.GenerosDAO;
 import DAO.PessoasDAO;
 import DAO.PessoaFilmesDAO;
 import VO.Filme;
@@ -85,6 +86,35 @@ public class FilmesController extends HttpServlet {
                 int idFilme = Integer.parseInt(request.getParameter("id"));
                 f.excluir(idFilme);
                 response.sendRedirect("FilmesController?op=1");
+            }
+            case 7 -> {
+                int idFilme = Integer.parseInt(request.getParameter("id"));
+                request.setAttribute("filme", f.buscarPorId(idFilme));
+                request.setAttribute("listaGeneros", new GenerosDAO().listar());
+                RequestDispatcher rd = request.getRequestDispatcher("/form_filme.jsp");
+                rd.forward(request, response);
+            }
+            case 8 -> {
+                Filme filme = new Filme();
+                filme.setId(Integer.parseInt(request.getParameter("id")));
+                filme.setNome(request.getParameter("nome"));
+                filme.setDescricao(request.getParameter("descricao"));
+                filme.setAutor(request.getParameter("autor"));
+                filme.setIndicacaoEtaria(Integer.parseInt(request.getParameter("indicacaoEtaria")));
+                filme.setCapaLink(request.getParameter("capa"));
+                filme.setFilmeLink(request.getParameter("filme"));
+                filme.setAno(Integer.parseInt(request.getParameter("ano")));
+                filme.setDuracao(request.getParameter("duracao"));
+                filme.setDisponibilidade(Boolean.parseBoolean(request.getParameter("disponibilidade")));
+                filme.setGeneroId(Integer.parseInt(request.getParameter("genero_id")));
+                filme.setTubCusto(Double.parseDouble(request.getParameter("tub_custo")));
+                f.atualizar(filme);
+                response.sendRedirect("FilmesController?op=1");
+            }
+            case 9 -> {
+                request.setAttribute("listaGeneros", new GenerosDAO().listar());
+                RequestDispatcher rd = request.getRequestDispatcher("/form_filme.jsp");
+                rd.forward(request, response);
             }
         }
     }

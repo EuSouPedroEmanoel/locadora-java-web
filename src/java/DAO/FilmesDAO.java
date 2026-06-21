@@ -17,16 +17,13 @@ public class FilmesDAO {
     public ArrayList<Filme> listar() {
         PreparedStatement ps;
         ResultSet rs;
-
         try {
             String sql = "SELECT * FROM filmes";
             ps = conexao.conectar().prepareStatement(sql);
             rs = ps.executeQuery();
             ArrayList<Filme> lista = new ArrayList<>();
-
             while (rs.next()) {
-                Filme f = carregarFilme(rs);
-                lista.add(f);
+                lista.add(carregarFilme(rs));
             }
             return lista;
         } catch (SQLException erro) {
@@ -89,11 +86,9 @@ public class FilmesDAO {
             ps.setBoolean(9, f.getDisponibilidade());
             ps.setInt(10, f.getGeneroId());
             ps.setDouble(11, f.getTubCusto());
-            
             ps.executeUpdate();
             return "True";
         } catch (SQLException erro) {
-            System.err.println("ERRO SQL: " + erro.getMessage());
             return "False";
         } finally {
             try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
@@ -101,38 +96,52 @@ public class FilmesDAO {
         }
     }
 
-    public void atualizarDisponibilidade(int id, boolean status) {
-    try {
-        String sql = "UPDATE filmes SET disponibilidade = ? WHERE id = ?";
-        PreparedStatement ps = conexao.conectar().prepareStatement(sql);
-        ps.setBoolean(1, status);
-        ps.setInt(2, id);
-        ps.executeUpdate();
-    } catch (SQLException e) { e.printStackTrace(); }
-    finally { conexao.desconectar(); }
-}
-
-public void excluir(int id) {
-    try {
-        var conn = conexao.conectar();
-        
-        // 1. Primeiro remove os registros dependentes
-        String sqlRelacao = "DELETE FROM pessoa_filme WHERE filme_id = ?";
-        PreparedStatement ps1 = conn.prepareStatement(sqlRelacao);
-        ps1.setInt(1, id);
-        ps1.executeUpdate();
-        
-        // 2. Depois remove o filme
-        String sqlFilme = "DELETE FROM filmes WHERE id = ?";
-        PreparedStatement ps2 = conn.prepareStatement(sqlFilme);
-        ps2.setInt(1, id);
-        ps2.executeUpdate();
-        
-    } catch (SQLException e) { 
-        e.printStackTrace(); 
-    } finally { 
-        conexao.desconectar(); 
+    public void atualizar(Filme f) {
+        try {
+            String sql = "UPDATE filmes SET nome=?, descricao=?, autor=?, indicacao_etaria=?, capa_link=?, filme_link=?, ano=?, duracao=?, genero_id=?, tub_custo=? WHERE id=?";
+            PreparedStatement ps = conexao.conectar().prepareStatement(sql);
+            ps.setString(1, f.getNome());
+            ps.setString(2, f.getDescricao());
+            ps.setString(3, f.getAutor());
+            ps.setInt(4, f.getIndicacaoEtaria());
+            ps.setString(5, f.getCapaLink());
+            ps.setString(6, f.getFilmeLink());
+            ps.setInt(7, f.getAno());
+            ps.setString(8, f.getDuracao());
+            ps.setInt(9, f.getGeneroId());
+            ps.setDouble(10, f.getTubCusto());
+            ps.setInt(11, f.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+        finally { conexao.desconectar(); }
     }
-}
 
+    public void atualizarDisponibilidade(int id, boolean status) {
+        try {
+            String sql = "UPDATE filmes SET disponibilidade = ? WHERE id = ?";
+            PreparedStatement ps = conexao.conectar().prepareStatement(sql);
+            ps.setBoolean(1, status);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+        finally { conexao.desconectar(); }
+    }
+
+    public void excluir(int id) {
+        try {
+            var conn = conexao.conectar();
+            String sqlRelacao = "DELETE FROM pessoa_filme WHERE filme_id = ?";
+            PreparedStatement ps1 = conn.prepareStatement(sqlRelacao);
+            ps1.setInt(1, id);
+            ps1.executeUpdate();
+            String sqlFilme = "DELETE FROM filmes WHERE id = ?";
+            PreparedStatement ps2 = conn.prepareStatement(sqlFilme);
+            ps2.setInt(1, id);
+            ps2.executeUpdate();
+        } catch (SQLException e) { 
+            e.printStackTrace(); 
+        } finally { 
+            conexao.desconectar(); 
+        }
+    }
 }

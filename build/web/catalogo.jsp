@@ -26,7 +26,7 @@
             <% if (session.getAttribute("usuarioLogado") != null) {
                 Pessoa user = (Pessoa) session.getAttribute("usuarioLogado");
             if (user.getSuper_user()) { %>
-            <a href="http://localhost:8080/Locadora/GeneroController?op=1" style="color: yellow; text-decoration: none;">+ Adicionar Filme</a>
+            <a href="http://localhost:8080/Locadora/FilmesController?op=9" style="color: yellow; text-decoration: none;">+ Adicionar Filme</a>
             <% } %>
 
             <div style="display: flex; align-items: center; gap: 15px;">
@@ -64,7 +64,8 @@
                                 <span onclick="toggleMenu(event, <%= f.getId() %>)" style="cursor: pointer; font-size: 22px; font-weight: bold; padding: 0 10px; color: white; user-select: none;">&#8942;</span>
 
                                 <div id="menu-<%= f.getId() %>" style="display: none; position: absolute; right: 0; top: 100%; background-color: #333; border: 1px solid #ffffff; border-radius: 4px; padding: 5px 0; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 10; min-width: 100px;">
-                                    <a href="FilmesController?op=6&id=<%= f.getId() %>" onclick="return confirm('Tem certeza que deseja excluir este filme?');" style="color: #ffffff; text-decoration: none; font-size: 14px; display: block; padding: 8px 15px; text-align: center;">Excluir</a>
+                                    <a href="FilmesController?op=7&id=<%= f.getId() %>" style="color: #ffffff; text-decoration: none; font-size: 14px; display: block; padding: 8px 15px; text-align: center;">Editar</a>
+                                    <a href="FilmesController?op=6&id=<%= f.getId() %>" onclick="return confirm('Tem certeza que deseja excluir este filme?');" style="color: #ff4c4c; text-decoration: none; font-size: 14px; display: block; padding: 8px 15px; text-align: center;">Excluir</a>
                                 </div>
                                 <% } %>
                             </div>
