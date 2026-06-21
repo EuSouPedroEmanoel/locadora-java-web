@@ -10,6 +10,9 @@ public class PessoaFilme {
     private String dataEmprestimo;
     private LocalDate dataDevolucaoPrev;
     private LocalDate dataDevolucaoReal;
+    
+    private String nomeFilme;
+    private String capaFilme;
 
     public int getId() {
         return id;
@@ -57,5 +60,23 @@ public class PessoaFilme {
 
     public void setDataDevolucaoReal(LocalDate dataDevolucaoReal) {
         this.dataDevolucaoReal = dataDevolucaoReal;
+    }
+
+    // --- Getters e Setters dos novos atributos ---
+
+    public String getNomeFilme() {
+        return nomeFilme;
+    }
+
+    public void setNomeFilme(String nomeFilme) {
+        this.nomeFilme = nomeFilme;
+    }
+
+    public String getCapaFilme() {
+        return capaFilme;
+    }
+
+    public void setCapaFilme(String capaFilme) {
+        this.capaFilme = capaFilme;
     }
 }

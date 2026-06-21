@@ -47,14 +47,15 @@ public class PessoaFilmesDAO {
     }
 
     public String inserir(PessoaFilme pf) {
-        String sql = "INSERT INTO pessoa_filme (pessoa_id, filme_id, data_devolucao_prev) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO pessoa_filme (pessoa_id, filme_id, data_emprestimo, data_devolucao_prev) VALUES (?, ?, ?, ?)";
         
         try (var conn = conexao.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, pf.getCpf());
             ps.setInt(2, pf.getFilmeId());
-            ps.setString(3, pf.getDataDevolucaoPrev().toString());
+            ps.setString(3, pf.getDataEmprestimo());
+            ps.setString(4, pf.getDataDevolucaoPrev().toString());
             
             ps.executeUpdate();
             return "True";
@@ -84,21 +85,68 @@ public class PessoaFilmesDAO {
     }
 
     public String buscarCpfDonoDoFilme(int filmeId) {
-    String sql = "SELECT pessoa_id FROM pessoa_filme WHERE filme_id = ? AND data_devolucao_real IS NULL";
-    try (var conn = conexao.conectar();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        
-        ps.setInt(1, filmeId);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getString("pessoa_id");
+        String sql = "SELECT pessoa_id FROM pessoa_filme WHERE filme_id = ? AND data_devolucao_real IS NULL";
+        try (var conn = conexao.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, filmeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("pessoa_id");
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conexao.desconectar();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        conexao.desconectar();
+        return null;
     }
-    return null;
-}
+
+    public ArrayList<PessoaFilme> buscarEmprestimosPorCpf(String cpf) {
+        // O "ORDER BY" usa um CASE para colocar NULL (não devolvidos) como prioridade (0) 
+        // e os devolvidos depois (1). Em seguida, ordena pela data de empréstimo do mais novo pro mais velho (DESC).
+        String sql = "SELECT pf.id, pf.pessoa_id, pf.filme_id, pf.data_emprestimo, " +
+                     "pf.data_devolucao_prev, pf.data_devolucao_real, " +
+                     "f.nome, f.capa_link " +
+                     "FROM pessoa_filme pf " +
+                     "INNER JOIN filmes f ON pf.filme_id = f.id " +
+                     "WHERE pf.pessoa_id = ? " +
+                     "ORDER BY CASE WHEN pf.data_devolucao_real IS NULL THEN 0 ELSE 1 END, " +
+                     "pf.data_emprestimo DESC";
+                     
+        ArrayList<PessoaFilme> lista = new ArrayList<>();
+        
+        try (var conn = conexao.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, cpf);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    PessoaFilme pf = new PessoaFilme();
+                    pf.setId(rs.getInt("id"));
+                    pf.setCpf(rs.getString("pessoa_id"));
+                    pf.setFilmeId(rs.getInt("filme_id"));
+                    pf.setDataEmprestimo(rs.getString("data_emprestimo"));
+                    
+                    String prev = rs.getString("data_devolucao_prev");
+                    if (prev != null) pf.setDataDevolucaoPrev(LocalDate.parse(prev));
+                    
+                    String real = rs.getString("data_devolucao_real");
+                    if (real != null) pf.setDataDevolucaoReal(LocalDate.parse(real));
+                    
+                    pf.setNomeFilme(rs.getString("nome"));
+                    pf.setCapaFilme(rs.getString("capa_link"));
+                    
+                    lista.add(pf);
+                }
+            }
+        } catch (SQLException erro) {
+            erro.printStackTrace();
+        } finally {
+            conexao.desconectar();
+        }
+        return lista;
+    }
 }

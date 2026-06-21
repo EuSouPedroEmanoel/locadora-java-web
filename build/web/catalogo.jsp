@@ -3,70 +3,67 @@
 <%@ page import="VO.Filme" %>
 <%@ page import="VO.Pessoa" %>
 
+<%
+    boolean isAdmin = false;
+    if (session.getAttribute("usuarioLogado") != null) {
+        Pessoa u = (Pessoa) session.getAttribute("usuarioLogado");
+        isAdmin = u.getSuper_user();
+    }
+%>
+
 <html>
     <head>
         <title>Catálogo</title>
-        <style>
-            .grid-container {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr); /* Cria 3 colunas iguais */
-                gap: 20px;
-                padding: 20px;
-                max-width: 1000px;
-                margin: 0 auto;
-            }
-            .card {
-                border: 1px solid #444;
-                padding: 15px;
-                text-align: center;
-                background-color: #1a1a1a;
-                border-radius: 8px;
-            }
-            .card img {
-                max-width: 100%;
-                height: 300px;
-                object-fit: cover;
-                border-radius: 4px;
-            }
-        </style>
     </head>
 
-    <body style="margin: 0; padding: 0; background-color: black; color: white;">
-        <nav style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #2e2e2e; position: sticky; top: 0;">
-            <form action="" style="margin: 0; padding: 0; font-size: large;"">
+    <body style="margin: 0; padding: 0; background-color: black; color: white; font-family: sans-serif;">
+        <nav style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #2e2e2e; position: sticky; top: 0; z-index: 100;">
+            <form action="" style="margin: 0; padding: 0; font-size: large;">
                 <input type="text" placeholder="Pesquisar" />
                 <button type="submit">IR</button>
             </form>
 
             <% if (session.getAttribute("usuarioLogado") != null) {
                 Pessoa user = (Pessoa) session.getAttribute("usuarioLogado");
-                if (user.getSuper_user()) { %>
-                    <a href="http://localhost:8080/Locadora/GeneroController?op=1" style="color: yellow;">+ Adicionar Filme</a>
+            if (user.getSuper_user()) { %>
+            <a href="http://localhost:8080/Locadora/GeneroController?op=1" style="color: yellow; text-decoration: none;">+ Adicionar Filme</a>
             <% } %>
-                <div>
-                    Olá, ${sessionScope.usuarioLogado.nome} 🤠👋
-                    <a href="PessoasController?op=4" style="color: white; margin-left: 10px;">Sair</a>
-                </div>
+            <div>
+                <a href="PessoaFilmesController?op=3" style="color: white; text-decoration: none;">Olá, ${sessionScope.usuarioLogado.nome} 🤠👋</a>
+                <a href="PessoasController?op=4" style="color: white; margin-left: 10px; text-decoration: none;">Sair</a>
+            </div>
             <% } else { %>
-                <div>
-                    <a href="entrar.jsp" style="color: white;">Entrar</a>
-                </div>
+            <div>
+                <a href="entrar.jsp" style="color: white; text-decoration: none;">Entrar</a>
+            </div>
             <% } %>
         </nav>
 
         <main>
-            <div class="grid-container">
-                <% 
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; max-width: 1000px; margin: 0 auto;">
+                <%
                     List<Filme> filmes = (List<Filme>) request.getAttribute("listaFilmes");
                     if (filmes != null) {
-                        for (Filme f : filmes) { 
-                %>
-                    <div class="card">
-                        <img src="<%= f.getCapaLink() %>" alt="<%= f.getNome() %>">
-                        <h3><%= f.getNome() %></h3>
-                        <a href="FilmesController?op=3&id=<%= f.getId() %>" style="color: cyan;">Ver Detalhes</a>
-                    </div>
-                <% 
+                        for (Filme f : filmes) {
+                        %>
+                        <div style="border: 1px solid #444; padding: 15px; text-align: center; background-color: #1a1a1a; border-radius: 8px; position: relative;">
+                            <img src="<%= f.getCapaLink() %>" alt="<%= f.getNome() %>" style="max-width: 100%; height: 300px; object-fit: cover; border-radius: 4px;">
+
+                            <div style="display: flex; justify-content: center; align-items: center; position: relative;">
+                                <h3 style="margin: 10px 0;"><%= f.getNome() %></h3>
+
+                                <% if (isAdmin) { %>
+                                <span onclick="toggleMenu(event, <%= f.getId() %>)" style="cursor: pointer; font-size: 22px; font-weight: bold; padding: 0 10px; color: white; user-select: none;">&#8942;</span>
+
+                                <div id="menu-<%= f.getId() %>" style="display: none; position: absolute; right: 0; top: 100%; background-color: #333; border: 1px solid #ffffff; border-radius: 4px; padding: 5px 0; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 10; min-width: 100px;">
+                                    <a href="FilmesController?op=6&id=<%= f.getId() %>" onclick="return confirm('Tem certeza que deseja excluir este filme?');" style="color: #ffffff; text-decoration: none; font-size: 14px; display: block; padding: 8px 15px; text-align: center;">Excluir</a>
+                                </div>
+                                <% } %>
+                            </div>
+
+                            <a href="FilmesController?op=3&id=<%= f.getId() %>" style="color: cyan; text-decoration: none;">Ver Detalhes</a>
+                        </div>
+                        <%
                         }
                     } else {
                         out.print("<p>Nenhum filme encontrado.</p>");
@@ -74,5 +71,22 @@
                 %>
             </div>
         </main>
+
+        <script>
+            function toggleMenu(event, id) {
+                event.stopPropagation();
+                var menu = document.getElementById('menu-' + id);
+                var isCurrentlyVisible = (menu.style.display === 'block');
+                var allMenus = document.querySelectorAll('[id^="menu-"]');
+                allMenus.forEach(function(m) { m.style.display = 'none'; });
+                if (!isCurrentlyVisible) {
+                    menu.style.display = 'block';
+                }
+            }
+            document.addEventListener('click', function(event) {
+                var allMenus = document.querySelectorAll('[id^="menu-"]');
+                allMenus.forEach(function(m) { m.style.display = 'none'; });
+            });
+        </script>
     </body>
 </html>

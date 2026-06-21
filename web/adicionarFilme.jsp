@@ -14,31 +14,10 @@
     </head>
 
     <body style="margin: 0; padding: 0; background-color: black;">
-        <nav
-        style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 10px; font-size: large; position: sticky; top: 0; background-color: #2e2e2e; color: white; z-index: 1000;">
 
-        <form action="" style="margin: 0; padding: 0; font-size: large;">
-            <input type="text" placeholder="Pesquisar" style="font-size: large;" />
-            <button type="submit" style="font-size: large;">IR</button>
-        </form>
 
-        <%
-            if (session.getAttribute("usuarioLogado") != null) {
-            %>
+        <div style="display: flex; justify-content: center"><a href="FilmesController?op=1" style="color: white">Voltar</a></div>
 
-            <div style="display: flex; gap: 14px; color: white;">
-                <a href="FilmesController?op=1" style="color: white;">Catálogo</a>
-                olá, ${sessionScope.usuarioLogado.nome} 🤠👋
-                <a href="LogoutServlet" style="color: white;">Sair</a>
-            </div>
-
-            <% } else { %>
-            <div style="display: flex; gap: 14px; color: white;">
-                <a href="entrar.jsp" style="color: white;">Entrar</a>
-                <a href="inserir.jsp" style="color: white;">Cadastrar</a>
-            </div>
-            <% } %>
-        </nav>
 
         <main
         style="display: flex; flex-direction: column; gap: 4px; justify-content: center; align-items: center; margin: 0; padding: 20px;">

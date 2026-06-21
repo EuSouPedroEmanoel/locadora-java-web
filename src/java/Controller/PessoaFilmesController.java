@@ -4,6 +4,7 @@ import DAO.PessoaFilmesDAO;
 import VO.PessoaFilme;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "PessoaFilmesController", urlPatterns = {"/PessoaFilmesController"})
-public class PessoaFilmeController extends HttpServlet {
+public class PessoaFilmesController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,7 +29,6 @@ public class PessoaFilmeController extends HttpServlet {
                 pessoaFilme.setFilmeId(Integer.parseInt(request.getParameter("filme_id")));
                 pessoaFilme.setDataEmprestimo(request.getParameter("data_emprestimo"));
                 
-                // Conversão explícita de String para LocalDate
                 String dataPrev = request.getParameter("data_devolucao_prev");
                 if (dataPrev != null && !dataPrev.isEmpty()) {
                     pessoaFilme.setDataDevolucaoPrev(LocalDate.parse(dataPrev));
@@ -42,6 +42,20 @@ public class PessoaFilmeController extends HttpServlet {
                 
                 pfDAO.finalizarEmprestimo(idFilme, cpf);
                 response.sendRedirect("exibe_resultado.jsp?result=True");
+            }
+            case 3 -> {
+                VO.Pessoa user = (VO.Pessoa) request.getSession().getAttribute("usuarioLogado");
+                
+                if (user != null) {
+                    String cpf = user.getCpf(); 
+                    
+                    List<PessoaFilme> historicoEmprestimos = pfDAO.buscarEmprestimosPorCpf(cpf);
+                    request.setAttribute("listaFilmes", historicoEmprestimos);
+                    request.setAttribute("cpfUsuario", cpf);
+                    request.getRequestDispatcher("perfil.jsp").forward(request, response);
+                } else {
+                    response.sendRedirect("entrar.jsp");
+                }
             }
         }
     }
