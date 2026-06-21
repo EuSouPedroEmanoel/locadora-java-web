@@ -35,7 +35,6 @@ public class PessoasController extends HttpServlet {
                 pes.setSuper_user(Boolean.parseBoolean(request.getParameter("super_user")));
                 response.sendRedirect("exibe_resultado.jsp?result=" + p.inserir(pes));
             }
-
             case 2 -> {
                 request.setAttribute("lista", p.listar());
                 RequestDispatcher rd = request.getRequestDispatcher("/exibe_pessoas.jsp");
@@ -44,9 +43,7 @@ public class PessoasController extends HttpServlet {
             case 3 -> {
                 String email = request.getParameter("email");
                 String senha = request.getParameter("password");
-
                 Pessoa usuarioLogado = p.buscarPorLogin(email, senha);
-
                 if (usuarioLogado != null) {
                     request.getSession().setAttribute("usuarioLogado", usuarioLogado);
                     response.sendRedirect("FilmesController?op=1");
@@ -59,6 +56,15 @@ public class PessoasController extends HttpServlet {
             case 4 -> {
                 request.getSession().invalidate();
                 response.sendRedirect("entrar.jsp");
+            }
+            case 5 -> {
+                double valorAdicionado = Double.parseDouble(request.getParameter("novoSaldo"));
+                Pessoa user = (Pessoa) request.getSession().getAttribute("usuarioLogado");
+                double saldoAtual = Double.parseDouble(user.getTubMoney());
+                double novoTotal = saldoAtual + valorAdicionado;
+                p.atualizarSaldo(user.getCpf(), novoTotal);
+                user.setTubMoney(String.valueOf(novoTotal));
+                response.sendRedirect("FilmesController?op=1");
             }
         }
     }

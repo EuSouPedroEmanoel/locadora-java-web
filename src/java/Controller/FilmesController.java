@@ -64,15 +64,12 @@ public class FilmesController extends HttpServlet {
                     double novoSaldo = Double.parseDouble(user.getTubMoney()) - filme.getTubCusto();
                     p.atualizarSaldo(user.getCpf(), novoSaldo);
                     f.atualizarDisponibilidade(idFilme, false);
-                    
                     PessoaFilme pf = new PessoaFilme();
                     pf.setCpf(user.getCpf());
                     pf.setFilmeId(idFilme);
-                    // AQUI A MUDANÇA: passamos o objeto LocalDate diretamente
                     pf.setDataEmprestimo(LocalDate.now().toString()); 
                     pf.setDataDevolucaoPrev(LocalDate.now().plusDays(7));
                     pfDAO.inserir(pf);
-                    
                     user.setTubMoney(String.valueOf(novoSaldo));
                 }
                 response.sendRedirect("FilmesController?op=3&id=" + idFilme);
@@ -80,11 +77,14 @@ public class FilmesController extends HttpServlet {
             case 5 -> {
                 int idFilme = Integer.parseInt(request.getParameter("id"));
                 Pessoa user = (Pessoa) request.getSession().getAttribute("usuarioLogado");
-                
                 f.atualizarDisponibilidade(idFilme, true);
                 pfDAO.finalizarEmprestimo(idFilme, user.getCpf());
-                
                 response.sendRedirect("FilmesController?op=3&id=" + idFilme);
+            }
+            case 6 -> {
+                int idFilme = Integer.parseInt(request.getParameter("id"));
+                f.excluir(idFilme);
+                response.sendRedirect("FilmesController?op=1");
             }
         }
     }

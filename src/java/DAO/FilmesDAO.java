@@ -111,4 +111,28 @@ public class FilmesDAO {
     } catch (SQLException e) { e.printStackTrace(); }
     finally { conexao.desconectar(); }
 }
+
+public void excluir(int id) {
+    try {
+        var conn = conexao.conectar();
+        
+        // 1. Primeiro remove os registros dependentes
+        String sqlRelacao = "DELETE FROM pessoa_filme WHERE filme_id = ?";
+        PreparedStatement ps1 = conn.prepareStatement(sqlRelacao);
+        ps1.setInt(1, id);
+        ps1.executeUpdate();
+        
+        // 2. Depois remove o filme
+        String sqlFilme = "DELETE FROM filmes WHERE id = ?";
+        PreparedStatement ps2 = conn.prepareStatement(sqlFilme);
+        ps2.setInt(1, id);
+        ps2.executeUpdate();
+        
+    } catch (SQLException e) { 
+        e.printStackTrace(); 
+    } finally { 
+        conexao.desconectar(); 
+    }
+}
+
 }

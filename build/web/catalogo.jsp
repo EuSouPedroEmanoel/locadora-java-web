@@ -28,9 +28,17 @@
             if (user.getSuper_user()) { %>
             <a href="http://localhost:8080/Locadora/GeneroController?op=1" style="color: yellow; text-decoration: none;">+ Adicionar Filme</a>
             <% } %>
-            <div>
-                <a href="PessoaFilmesController?op=3" style="color: white; text-decoration: none;">Olá, ${sessionScope.usuarioLogado.nome} 🤠👋</a>
-                <a href="PessoasController?op=4" style="color: white; margin-left: 10px; text-decoration: none;">Sair</a>
+
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="background-color: #1a1a1a; color: white; padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9em;">
+                        TubMoney: <%= user.getTubMoney() %>
+                    </span>
+                    <a href="adicionar_saldo.jsp" style="background-color: #28a745; color: white; text-decoration: none; padding: 2px 8px; border-radius: 4px; font-weight: bold;">+</a>
+                </div>
+
+                <a href="PessoaFilmesController?op=3" style="color: white; text-decoration: none;">Olá, <%= user.getNome() %> 🤠👋</a>
+                <a href="PessoasController?op=4" style="color: white; text-decoration: none;">Sair</a>
             </div>
             <% } else { %>
             <div>

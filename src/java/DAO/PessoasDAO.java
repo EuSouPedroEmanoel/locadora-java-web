@@ -37,15 +37,18 @@ public class PessoasDAO {
     }
 
     public void atualizarSaldo(String cpf, double novoSaldo) {
-    try {
-        String sql = "UPDATE pessoa SET tub_money = ? WHERE cpf = ?";
-        PreparedStatement ps = conexao.conectar().prepareStatement(sql);
-        ps.setDouble(1, novoSaldo);
-        ps.setString(2, cpf);
-        ps.executeUpdate();
-    } catch (SQLException e) { e.printStackTrace(); }
-    finally { conexao.desconectar(); }
-}
+        try {
+            String sql = "UPDATE pessoa SET tub_money = ? WHERE cpf = ?";
+            PreparedStatement ps = conexao.conectar().prepareStatement(sql);
+            ps.setDouble(1, novoSaldo);
+            ps.setString(2, cpf);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conexao.desconectar();
+        }
+    }
 
     public ArrayList<Pessoa> listar() {
         PreparedStatement ps;
@@ -96,7 +99,6 @@ public class PessoasDAO {
                 p.setEmail(rs.getString("email"));
                 p.setSenha(rs.getString("senha"));
                 p.setSuper_user(rs.getBoolean("super_user"));
-                
                 return p; 
             }
         } catch (Exception e) {
@@ -104,7 +106,6 @@ public class PessoasDAO {
         } finally {
             conexao.desconectar();
         }
-        
         return null; 
     }
 }
