@@ -53,6 +53,27 @@ public class FilmesDAO {
         return null;
     }
 
+    public ArrayList<Filme> pesquisarPorNome(String termo) {
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            String sql = "SELECT * FROM filmes WHERE nome LIKE ?";
+            ps = conexao.conectar().prepareStatement(sql);
+            ps.setString(1, "%" + termo + "%");
+            rs = ps.executeQuery();
+            ArrayList<Filme> lista = new ArrayList<>();
+            while (rs.next()) {
+                lista.add(carregarFilme(rs));
+            }
+            return lista;
+        } catch (SQLException erro) {
+            erro.printStackTrace();
+            return null;
+        } finally {
+            conexao.desconectar();
+        }
+    }
+
     private Filme carregarFilme(ResultSet rs) throws SQLException {
         Filme f = new Filme();
         f.setId(rs.getInt("id"));

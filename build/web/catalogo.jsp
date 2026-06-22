@@ -18,15 +18,16 @@
 
     <body style="margin: 0; padding: 0; background-color: black; color: white; font-family: sans-serif;">
         <nav style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #2e2e2e; position: sticky; top: 0; z-index: 100;">
-            <form action="" style="margin: 0; padding: 0; font-size: large;">
-                <input type="text" placeholder="Pesquisar" />
+            <form action="FilmesController" method="GET" style="margin: 0; padding: 0; font-size: large;">
+                <input type="hidden" name="op" value="10" />
+                <input type="text" name="termoBusca" placeholder="Pesquisar" />
                 <button type="submit">IR</button>
             </form>
 
             <% if (session.getAttribute("usuarioLogado") != null) {
                 Pessoa user = (Pessoa) session.getAttribute("usuarioLogado");
             if (user.getSuper_user()) { %>
-            <a href="http://localhost:8080/Locadora/FilmesController?op=9" style="color: yellow; text-decoration: none;">+ Adicionar Filme</a>
+            <a href="FilmesController?op=9" style="color: yellow; text-decoration: none;">+ Adicionar Filme</a>
             <% } %>
 
             <div style="display: flex; align-items: center; gap: 15px;">

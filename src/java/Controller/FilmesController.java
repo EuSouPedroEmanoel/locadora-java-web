@@ -116,6 +116,12 @@ public class FilmesController extends HttpServlet {
                 RequestDispatcher rd = request.getRequestDispatcher("/form_filme.jsp");
                 rd.forward(request, response);
             }
+            case 10 -> {
+                String termo = request.getParameter("termoBusca");
+                request.setAttribute("listaFilmes", f.pesquisarPorNome(termo));
+                RequestDispatcher rd = request.getRequestDispatcher("/resultados_pesquisa.jsp");
+                rd.forward(request, response);
+            }
         }
     }
 
