@@ -33,6 +33,7 @@ public class FilmesController extends HttpServlet {
         switch (operacao) {
             case 1 -> {
                 request.setAttribute("listaFilmes", f.listar());
+                request.setAttribute("listaGeneros", new GenerosDAO().listar());
                 RequestDispatcher rd = request.getRequestDispatcher("/catalogo.jsp");
                 rd.forward(request, response);
             }
@@ -120,6 +121,14 @@ public class FilmesController extends HttpServlet {
                 String termo = request.getParameter("termoBusca");
                 request.setAttribute("listaFilmes", f.pesquisarPorNome(termo));
                 RequestDispatcher rd = request.getRequestDispatcher("/resultados_pesquisa.jsp");
+                rd.forward(request, response);
+            }
+            case 11 -> {
+                String generoId = request.getParameter("genero_id");
+                String disponibilidade = request.getParameter("disponibilidade");
+                request.setAttribute("listaFilmes", f.filtrar(generoId, disponibilidade));
+                request.setAttribute("listaGeneros", new GenerosDAO().listar());
+                RequestDispatcher rd = request.getRequestDispatcher("/catalogo.jsp");
                 rd.forward(request, response);
             }
         }

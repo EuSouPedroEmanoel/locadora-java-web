@@ -74,6 +74,34 @@ public class FilmesDAO {
         }
     }
 
+    public ArrayList<Filme> filtrar(String generoId, String disponibilidade) {
+        PreparedStatement ps;
+        ResultSet rs;
+        try {
+            StringBuilder sql = new StringBuilder("SELECT * FROM filmes WHERE 1=1");
+            
+            if (generoId != null && !generoId.isEmpty()) {
+                sql.append(" AND genero_id = ").append(generoId);
+            }
+            if (disponibilidade != null && !disponibilidade.isEmpty()) {
+                sql.append(" AND disponibilidade = ").append(disponibilidade);
+            }
+            
+            ps = conexao.conectar().prepareStatement(sql.toString());
+            rs = ps.executeQuery();
+            ArrayList<Filme> lista = new ArrayList<>();
+            while (rs.next()) {
+                lista.add(carregarFilme(rs));
+            }
+            return lista;
+        } catch (SQLException erro) {
+            erro.printStackTrace();
+            return null;
+        } finally {
+            conexao.desconectar();
+        }
+    }
+
     private Filme carregarFilme(ResultSet rs) throws SQLException {
         Filme f = new Filme();
         f.setId(rs.getInt("id"));

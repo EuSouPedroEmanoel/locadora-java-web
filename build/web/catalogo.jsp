@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="VO.Filme" %>
 <%@ page import="VO.Pessoa" %>
+<%@ page import="VO.Genero" %>
 
 <%
     boolean isAdmin = false;
@@ -18,16 +19,19 @@
 
     <body style="margin: 0; padding: 0; background-color: black; color: white; font-family: sans-serif;">
         <nav style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #2e2e2e; position: sticky; top: 0; z-index: 100;">
-            <form action="FilmesController" method="GET" style="margin: 0; padding: 0; font-size: large;">
-                <input type="hidden" name="op" value="10" />
-                <input type="text" name="termoBusca" placeholder="Pesquisar" />
-                <button type="submit">IR</button>
-            </form>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <form action="FilmesController" method="GET" style="margin: 0; padding: 0; font-size: large; display: flex;">
+                    <input type="hidden" name="op" value="10" />
+                    <input type="text" name="termoBusca" placeholder="Pesquisar" />
+                    <button type="submit">IR</button>
+                </form>
+                <button onclick="toggleFiltros()" style="padding: 5px 10px; cursor: pointer; background-color: #444; color: white; border: 1px solid #777; border-radius: 4px; font-weight: bold;">Filtros ▼</button>
+            </div>
 
             <% if (session.getAttribute("usuarioLogado") != null) {
                 Pessoa user = (Pessoa) session.getAttribute("usuarioLogado");
             if (user.getSuper_user()) { %>
-            <a href="FilmesController?op=9" style="color: yellow; text-decoration: none;">+ Adicionar Filme</a>
+            <a href="GeneroController?op=1" style="color: yellow; text-decoration: none;">+ Adicionar Filme</a>
             <% } %>
 
             <div style="display: flex; align-items: center; gap: 15px;">
@@ -48,11 +52,45 @@
             <% } %>
         </nav>
 
+        <div id="painelFiltros" style="display: none; background-color: #1a1a1a; padding: 15px; border-bottom: 1px solid #444; justify-content: center;">
+            <form action="FilmesController" method="GET" style="display: flex; gap: 20px; align-items: center; margin: 0; color: white;">
+                <input type="hidden" name="op" value="11" />
+
+                <label style="font-weight: bold;">
+                    Gênero:
+                    <select name="genero_id" style="padding: 5px; border-radius: 4px;">
+                        <option value="">Todos os Gêneros</option>
+                        <%
+                            List<Genero> generosFiltro = (List<Genero>) request.getAttribute("listaGeneros");
+                            if (generosFiltro != null) {
+                                for (Genero g : generosFiltro) {
+                                %>
+                                <option value="<%= g.getId() %>"><%= g.getNome() %></option>
+                                <%
+                                }
+                            }
+                        %>
+                    </select>
+                </label>
+
+                <label style="font-weight: bold;">
+                    Status:
+                    <select name="disponibilidade" style="padding: 5px; border-radius: 4px;">
+                        <option value="">Todos</option>
+                        <option value="true">Disponíveis</option>
+                        <option value="false">Emprestados</option>
+                    </select>
+                </label>
+
+                <button type="submit" style="padding: 6px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Aplicar</button>
+            </form>
+        </div>
+
         <main>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; max-width: 1000px; margin: 0 auto;">
                 <%
                     List<Filme> filmes = (List<Filme>) request.getAttribute("listaFilmes");
-                    if (filmes != null) {
+                    if (filmes != null && !filmes.isEmpty()) {
                         for (Filme f : filmes) {
                         %>
                         <div style="border: 1px solid #444; padding: 15px; text-align: center; background-color: #1a1a1a; border-radius: 8px; position: relative;">
@@ -76,7 +114,7 @@
                         <%
                         }
                     } else {
-                        out.print("<p>Nenhum filme encontrado.</p>");
+                        out.print("<div style='grid-column: span 3; text-align: center; padding: 50px;'><h3 style='color: #ff4c4c;'>Nenhum filme encontrado.</h3></div>");
                     }
                 %>
             </div>
@@ -93,6 +131,16 @@
                     menu.style.display = 'block';
                 }
             }
+            
+            function toggleFiltros() {
+                var painel = document.getElementById('painelFiltros');
+                if (painel.style.display === 'none' || painel.style.display === '') {
+                    painel.style.display = 'flex';
+                } else {
+                    painel.style.display = 'none';
+                }
+            }
+            
             document.addEventListener('click', function(event) {
                 var allMenus = document.querySelectorAll('[id^="menu-"]');
                 allMenus.forEach(function(m) { m.style.display = 'none'; });
